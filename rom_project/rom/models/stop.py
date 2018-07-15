@@ -1,6 +1,5 @@
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
-from .pattern import Pattern
 
 class Stop(models.Model):
     stop_onestop_id = models.CharField(max_length=100)

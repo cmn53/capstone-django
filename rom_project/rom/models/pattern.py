@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from .route import Route
+from .stop import Stop
 
 class Pattern(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
@@ -16,6 +17,7 @@ class Pattern(models.Model):
     wk_18_21 = models.IntegerField()
     wk_21_24 = models.IntegerField()
     wk_24_28 = models.IntegerField()
+    stops = models.ManyToManyField(Stop)
 
     def __str__(self):
         return "%s Pattern %s" %(self.route.operator.name, self.pattern_onestop_id)
