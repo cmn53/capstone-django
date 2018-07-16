@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import Distance
+from django.db.models import Sum
 from .metro import Metro
 from .stop import Stop
 from .pattern import Pattern
@@ -44,16 +45,31 @@ class Hotel(models.Model):
 
     def get_frequent_trips(self):
         patterns = self.nearby_patterns()
-        trips_by_route = patterns.values('route_id').annotate(
-                Sum('wk_trips'),
-                Sum('sa_trips'),
-                Sum('su_trips'),
-                Sum('wk_06_09'),
-                Sum('wk_09_12'),
-                Sum('wk_12_15'),
-                Sum('wk_15_18'),
-                Sum('wk_18_21')
+        trips_by_route = Route.objects.values('long_name') \
+            .filter(pattern__in=patterns) \
+            .annotate(
+                ampeak=Sum('pattern__wk_06_09'),
+                midam=Sum('pattern__wk_09_12'),
+                midpm=Sum('pattern__wk_12_15'),
+                pmpeak=Sum('pattern__wk_15_18'),
+                evening=Sum('pattern__wk_18_21')
             )
-    #
-    # def get_trips_serving_destinations(self):
-    #     pass
+
+        frequent_trips = 0
+
+        for r in trips_by_route:
+            core_hour_trips = r["ampeak"] + r["midam"] + r["midpm"] + r["pmpeak"]
+            evening_trips = r["evening"]
+            print("Route %s has %d core hours trips and %d evening trips" %(r["name"], core_hour_trips, evening_trips))
+            # 96 trips over a 12 hour period (6am-6pm) represents an average headway of 15 minutes for bidirectional service
+            # 18 trips over a 3 hour period (6pm-9pm) represents an average headway of 20 minutes for bidirectional service
+            if core_hour_trips > 96 and evening_trips > 18:
+                frequent_trips += core_hour_trips + evening_trips
+
+        return frequent_trips
+
+    def get_trips_serving_destinations(self):
+        destinations = Destinations.objects.filter(metro=self.metro)
+        destination_patterns = destinations.get_nearby_patterns()
+        hotel_patterns = self.get_nearby_patterns()
+        hotel_patterns.intersect(destination_patterns).aggregate(Sum('wk_trips'))
