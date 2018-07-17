@@ -89,15 +89,40 @@ class Hotel(models.Model):
         return total_weekly_trips
 
 
+    def get_destinations_served(self):
+        destinations_served = {}
+        hotel_patterns = self.nearby_patterns()
+        destinations = Destination.objects.filter(metro=self.metro)
+        for d in destinations:
+            destination_patterns = d.nearby_patterns()
+            intersect_patterns = hotel_patterns.filter(pk__in=destination_patterns)
+            if intersect_patterns:
+                total_weekly_trips = 0
+                for p in intersect_patterns:
+                    total_weekly_trips += p.weekly_trips
+                destinations_served[d.name] = total_weekly_trips
+        return destinations_served
+
+
     @classmethod
     def write_scores(cls):
         hotel_scores = []
         for h in Hotel.objects.all():
-            hotel_scores.append([h.id, h.name, h.get_weekly_trips(), h.get_frequent_trips(), h.get_trips_serving_destinations()])
+            qtr_dest = h.get_destinations_served()
+            half_dest = h.get_destinations_served()
+            hotel_scores.append([
+                h.id,
+                h.name,
+                h.get_weekly_trips(),
+                h.get_frequent_trips(),
+                len(destinations),
+                sum(destinations.values())
+            ])
 
         new_file = open('hotel_scores.csv', 'w')
         with new_file:
             writer = csv.writer(new_file)
+            writer.writerow(["ID", "NAME", "QTR_TRIPS", "QTR_FREQ_TRIPS", "QTR_DEST", "QTR_DEST_TRIPS", "HALF_TRIPS", "HALF_FREQ_TRIPS", "HALF_DEST", "HALF_DEST_TRIPS"])
             writer.writerows(hotel_scores)
 
         return "Successful printing"
