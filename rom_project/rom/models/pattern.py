@@ -27,27 +27,3 @@ class Pattern(models.Model):
         # Total trips operated on pattern during an average week
         total = (self.wk_trips * 5) + self.sa_trips + self.su_trips
         return total
-
-    @property
-    def early_am_trips(self):
-        # Total weekday trips operated on pattern from 3AM-6AM
-        total = self.wk_03_06
-        return total
-
-    @property
-    def core_hour_trips(self):
-        # Total weekday trips operated on pattern from 6AM-6PM
-        total = self.wk_06_09 + self.wk_09_12 + self.wk_12_15 + self.wk_15_18
-        return total
-
-    @property
-    def evening_trips(self):
-        # Total weekday trips operated on pattern from 6PM-9PM
-        total = self.wk_18_21
-        return total
-
-    @property
-    def night_trips(self):
-        # Total weekday trips operated on pattern from 9PM-3AM
-        total = self.wk_21_24 + self.wk_24_28 + self.wk_00_03
-        return total
