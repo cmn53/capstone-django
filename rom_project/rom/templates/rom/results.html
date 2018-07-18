@@ -1,2 +1,6 @@
-{{ metro }}
-{{ hotels }}
+<h2>{{ metro }} Hotels</h2>
+<ul>
+{% for hotel in hotels %}
+    <li>{{ hotel.name }}: {{ hotel.score.qtr_score }}</li>
+{% endfor %}
+</ul>

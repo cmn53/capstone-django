@@ -18,6 +18,7 @@ class Score(models.Model):
     def __str__(self):
         return ("Score: hotel %d" %self.hotel.id)
 
+    @property
     def qtr_score(self):
         if self.qtr_trips == 0:
             return 0

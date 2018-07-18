@@ -5,6 +5,7 @@ from . import views
 app_name = 'rom'
 urlpatterns = [
     path('', views.index, name='index'),
-    path('results/<metro_id>/', views.results, name='results'),
+    path('<metro_id>/results/', views.results, name='results'),
     path('hotel/<int:hotel_id>/', views.detail, name='detail'),
+    path('search/', views.search, name='search'),
 ]
