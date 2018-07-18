@@ -23,13 +23,12 @@ class Hotel(models.Model):
     def __str__(self):
         return self.name
 
-    def nearby_stops(self):
-        radius = 0.25 # miles
+    def nearby_stops(self, radius):
         stops = Stop.objects.filter(geom__distance_lte=(self.geom, Distance(mi=radius)))
         return stops
 
-    def nearby_patterns(self):
-        stops = self.nearby_stops()
+    def nearby_patterns(self, radius):
+        stops = self.nearby_stops(radius)
         patterns = Pattern.objects.filter(stops__in=stops).distinct()
         return patterns
 
@@ -39,16 +38,16 @@ class Hotel(models.Model):
     #     routes = Route.objects.filter(pattern__in=patterns).distinct()
     #     return routes
 
-    def get_weekly_trips(self):
-        patterns = self.nearby_patterns()
+    def get_weekly_trips(self, radius):
+        patterns = self.nearby_patterns(radius)
         total_weekly_trips = 0
         for p in patterns:
             total_weekly_trips += p.weekly_trips
         return total_weekly_trips
 
 
-    def get_frequent_trips(self):
-        patterns = self.nearby_patterns()
+    def get_frequent_trips(self, radius):
+        patterns = self.nearby_patterns(radius)
         trips_by_route = Route.objects.values('name') \
             .filter(pattern__in=patterns) \
             .annotate(
@@ -73,28 +72,29 @@ class Hotel(models.Model):
         return frequent_trips
 
 
-    def get_trips_serving_destinations(self):
-        destination_set = Destination.objects.filter(metro=self.metro).aggregate(Collect("geom"))
-        destination_stops = Stop.objects.filter(geom__distance_lte=(destination_set["geom__collect"], Distance(mi=0.25)))
-        destination_patterns = Pattern.objects.filter(stops__in=destination_stops).distinct()
+    # Using this method in place of get_destinations_served is much faster provides less robust information
+    # def get_trips_serving_destinations(self, radius):
+    #     destination_set = Destination.objects.filter(metro=self.metro).aggregate(Collect("geom"))
+    #     destination_stops = Stop.objects.filter(geom__distance_lte=(destination_set["geom__collect"], Distance(mi=radius)))
+    #     destination_patterns = Pattern.objects.filter(stops__in=destination_stops).distinct()
+    #
+    #     hotel_patterns = self.nearby_patterns(radius)
+    #
+    #     intersect_patterns = hotel_patterns.filter(pk__in=destination_patterns)
+    #
+    #     total_weekly_trips = 0
+    #     for p in intersect_patterns:
+    #         total_weekly_trips += p.weekly_trips
+    #
+    #     return total_weekly_trips
 
-        hotel_patterns = self.nearby_patterns()
 
-        intersect_patterns = hotel_patterns.filter(pk__in=destination_patterns)
-
-        total_weekly_trips = 0
-        for p in intersect_patterns:
-            total_weekly_trips += p.weekly_trips
-
-        return total_weekly_trips
-
-
-    def get_destinations_served(self):
+    def get_destinations_served(self, radius):
         destinations_served = {}
-        hotel_patterns = self.nearby_patterns()
+        hotel_patterns = self.nearby_patterns(radius)
         destinations = Destination.objects.filter(metro=self.metro)
         for d in destinations:
-            destination_patterns = d.nearby_patterns()
+            destination_patterns = d.nearby_patterns(radius)
             intersect_patterns = hotel_patterns.filter(pk__in=destination_patterns)
             if intersect_patterns:
                 total_weekly_trips = 0
@@ -105,24 +105,27 @@ class Hotel(models.Model):
 
 
     @classmethod
-    def write_scores(cls):
+    def write_score_elements(cls):
         hotel_scores = []
         for h in Hotel.objects.all():
-            qtr_dest = h.get_destinations_served()
-            half_dest = h.get_destinations_served()
-            hotel_scores.append([
-                h.id,
-                h.name,
-                h.get_weekly_trips(),
-                h.get_frequent_trips(),
-                len(destinations),
-                sum(destinations.values())
-            ])
+            qtr_dest = h.get_destinations_served(0.25)
+            half_dest = h.get_destinations_served(0.5)
+            hotel_scores.append(
+                {
+                    "hotel_id": h.id,
+                    "qtr_trips": h.get_weekly_trips(0.25),
+                    "qtr_freq_trips": h.get_frequent_trips(0.25),
+                    "qtr_dest": len(qtr_dest),
+                    "qtr_dest_trips": sum(qtr_dest.values()),
+                    "half_trips": h.get_weekly_trips(0.5),
+                    "half_freq_trips": h.get_frequent_trips(0.5),
+                    "half_dest": len(half_dest),
+                    "half_dest_trips": sum(half_dest.values())
 
-        new_file = open('hotel_scores.csv', 'w')
-        with new_file:
-            writer = csv.writer(new_file)
-            writer.writerow(["ID", "NAME", "QTR_TRIPS", "QTR_FREQ_TRIPS", "QTR_DEST", "QTR_DEST_TRIPS", "HALF_TRIPS", "HALF_FREQ_TRIPS", "HALF_DEST", "HALF_DEST_TRIPS"])
-            writer.writerows(hotel_scores)
+            )
+            print("Finished number crunching for hotel %s" %h.id)
 
-        return "Successful printing"
+        with open('../static/data/score_data.json', 'w') as f:
+            json.dump(hotel_scores, f)
+
+        return "Successfully wrote scoring data to file"
