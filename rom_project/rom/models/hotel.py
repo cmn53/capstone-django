@@ -8,7 +8,7 @@ from .stop import Stop
 from .pattern import Pattern
 from .route import Route
 from .destination import Destination
-import csv
+import json
 
 class Hotel(models.Model):
     hotel_code = models.IntegerField()
@@ -125,7 +125,7 @@ class Hotel(models.Model):
             )
             print("Finished number crunching for hotel %s" %h.id)
 
-        with open('../static/data/score_data.json', 'w') as f:
+        with open('rom/static/data/score_data.json', 'w') as f:
             json.dump(hotel_scores, f)
 
         return "Successfully wrote scoring data to file"
