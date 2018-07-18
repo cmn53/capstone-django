@@ -121,7 +121,7 @@ class Hotel(models.Model):
                     "half_freq_trips": h.get_frequent_trips(0.5),
                     "half_dest": len(half_dest),
                     "half_dest_trips": sum(half_dest.values())
-
+                }
             )
             print("Finished number crunching for hotel %s" %h.id)
 

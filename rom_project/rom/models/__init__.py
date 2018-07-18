@@ -7,3 +7,4 @@ from .pattern import Pattern
 from .stop import Stop
 from .arrival import Arrival
 from .destination import Destination
+from .score import Score
