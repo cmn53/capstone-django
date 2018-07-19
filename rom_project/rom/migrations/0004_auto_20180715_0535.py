@@ -11,7 +11,7 @@ def load_hotel_data(apps, schema_editor):
     Hotel = apps.get_model('rom', 'Hotel')
     Metro = apps.get_model('rom', 'Metro')
 
-    with open('rom/static/data/hotel_data.json') as json_file:
+    with open('rom/fixtures/hotel_data.json') as json_file:
         data = json.load(json_file)
 
         for d in data:

@@ -10,7 +10,7 @@ def load_destination_data(apps, schema_editor):
     Destination = apps.get_model('rom', 'Destination')
     Metro = apps.get_model('rom', 'Metro')
 
-    with open('rom/static/data/destination_data.json') as json_file:
+    with open('rom/fixtures/destination_data.json') as json_file:
         data = json.load(json_file)
 
         for d in data["features"]:

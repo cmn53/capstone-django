@@ -8,7 +8,7 @@ def load_score_data(apps, schema_editor):
     Score = apps.get_model('rom', 'Score')
     Hotel = apps.get_model('rom', 'Hotel')
 
-    with open('rom/static/data/score_data.json') as json_file:
+    with open('rom/fixtures/score_data.json') as json_file:
         data = json.load(json_file)
 
         for d in data:

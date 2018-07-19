@@ -9,7 +9,7 @@ def relate_patterns_and_stops(apps, schema_editor):
     Pattern = apps.get_model('rom', 'Pattern')
     Stop = apps.get_model('rom', 'Stop')
 
-    with open('rom/static/data/pattern_data.json') as json_file:
+    with open('rom/fixtures/pattern_data.json') as json_file:
         data = json.load(json_file)
 
         for pattern in data:

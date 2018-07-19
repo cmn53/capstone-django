@@ -10,7 +10,7 @@ def load_route_data(apps, schema_editor):
     Operator = apps.get_model('rom', 'Operator')
     Route = apps.get_model('rom', 'Route')
 
-    with open('rom/static/data/route_data.json') as json_file:
+    with open('rom/fixtures/route_data.json') as json_file:
         data = json.load(json_file)
 
         for d in data:

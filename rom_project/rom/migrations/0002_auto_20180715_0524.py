@@ -9,7 +9,7 @@ from django.contrib.gis.geos import Point, GEOSGeometry
 def load_metro_areas(apps, schema_editor):
     Metro = apps.get_model('rom', 'Metro')
 
-    with open('rom/static/data/metro_data.json') as json_file:
+    with open('rom/fixtures/metro_data.json') as json_file:
         data = json.load(json_file)
 
         for d in data:

@@ -10,7 +10,7 @@ def load_arrival_data(apps, schema_editor):
     Arrival = apps.get_model('rom', 'Arrival')
     Metro = apps.get_model('rom', 'Metro')
 
-    with open('rom/static/data/arrival_data.json') as json_file:
+    with open('rom/fixtures/arrival_data.json') as json_file:
         data = json.load(json_file)
 
         for d in data:

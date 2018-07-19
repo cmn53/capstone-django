@@ -8,7 +8,7 @@ from django.contrib.gis.geos import Point, GEOSGeometry
 def load_stop_data(apps, schema_editor):
     Stop = apps.get_model('rom', 'Stop')
 
-    with open('rom/static/data/stop_data.json') as json_file:
+    with open('rom/fixtures/stop_data.json') as json_file:
         data = json.load(json_file)
 
     for d in data:
