@@ -7,5 +7,4 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('<metro_id>/results/', views.results, name='results'),
     path('hotel/<int:hotel_id>/', views.detail, name='detail'),
-    path('search/', views.search, name='search'),
 ]
