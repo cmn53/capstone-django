@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views import generic
+from django.core.serializers import serialize
 
 from .models import Hotel, Metro, Score
 from .forms import SearchForm
@@ -28,7 +28,9 @@ def index(request):
 def results(request, metro_id):
     metro = get_object_or_404(Metro, pk=metro_id)
     hotels = Hotel.objects.filter(metro=metro)
-    context = {'metro': metro, 'hotels': hotels}
+    geojson = serialize('geojson', hotels,
+        geometry_field='geom', fields=('name','hotel.score.qtr_trips',))
+    context = {'metro': metro, 'hotels': hotels, 'geojson': geojson}
     return render(request, 'rom/results.html', context)
 
 

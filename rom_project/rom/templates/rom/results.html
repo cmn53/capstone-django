@@ -1,6 +1,55 @@
-<h2>{{ metro }} Hotels</h2>
-<ul>
-{% for hotel in hotels %}
-    <li>{{ hotel.name }}: {{ hotel.score.qtr_score }}</li>
-{% endfor %}
-</ul>
+{% extends 'rom/base.html' %}
+{% block content %}
+
+  <h2>{{ metro }} Hotels</h2>
+  <div id="map"></div>
+
+  <script type="text/javascript">
+
+    let map = L.map('map').setView([47.606375, -122.331964], 13);
+
+    L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}{r}.png',
+      {
+        attribution: '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+      }).addTo(map);
+
+    let data = {{ geojson|safe|escape }};
+    // L.geoJson(hotels).addTo(map);
+
+    // let myIcon = L.AwesomeMarkers.icon({
+    //   prefix: 'fa', //font awesome rather than bootstrap
+    //   markerColor: 'red', // see colors above
+    //   icon: 'coffee' //http://fortawesome.github.io/Font-Awesome/icons/
+    // });
+    //
+    // let hotels = L.geoJson(data, {
+    //   pointToLayer: function(feature, latlng) {
+    //       return L.marker(latlng, {
+    //           icon: myIcon
+    //       })
+    //   }
+    // }).addTo(map);
+
+    // let hotelLayer = L.geoJSON().addTo(map);
+    // hotelLayer.addData(geojson);
+    console.log(data)
+    let hotelLayer = L.geoJSON(data, {
+      pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {
+            icon: L.icon.glyph({
+            prefix: '',
+            glyph: feature.properties.score
+          })
+        })
+      }
+    }).addTo(map);
+
+  </script>
+
+  <ul>
+  {% for hotel in hotels %}
+      <li>{{ hotel.name }}: {{ hotel.score.qtr_score }}</li>
+  {% endfor %}
+  </ul>
+
+{% endblock %}
