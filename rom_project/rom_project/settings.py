@@ -29,7 +29,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS = [
     '0.0.0.0',
     'localhost',
-    'https://rom-free.herokuapp.com/',
+    'rom-free.herokuapp.com',
 ]
 
 
