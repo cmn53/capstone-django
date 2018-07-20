@@ -139,6 +139,7 @@ STATICFILES_DIRS = [
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 import dj_database_url
+DATABASES = {}
 DATABASES['default'] =  dj_database_url.config(default='DATABASE_URL')
 DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
