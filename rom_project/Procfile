@@ -1,1 +1,1 @@
-web: gunicorn rom-free.wsgi --log-file -
+web: gunicorn rom_project.wsgi --log-file -
