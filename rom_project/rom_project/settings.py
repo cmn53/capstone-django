@@ -80,16 +80,16 @@ WSGI_APPLICATION = 'rom_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-			'ENGINE': 'django.contrib.gis.db.backends.postgis',
-			'NAME': config('DB_NAME'),
-			'USER': config('DB_USER'),
-			'PASSWORD': config('DB_PASSWORD'),
-			'HOST': config('DB_HOST'),
-			'PORT': '',
-   		 }
-}
+# DATABASES = {
+#     'default': {
+# 			'ENGINE': 'django.contrib.gis.db.backends.postgis',
+# 			'NAME': config('DB_NAME'),
+# 			'USER': config('DB_USER'),
+# 			'PASSWORD': config('DB_PASSWORD'),
+# 			'HOST': config('DB_HOST'),
+# 			'PORT': '',
+#    		 }
+# }
 
 
 # Password validation
@@ -139,7 +139,7 @@ STATICFILES_DIRS = [
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
+DATABASES['default'] =  dj_database_url.config(default='DATABASE_URL')
 DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
