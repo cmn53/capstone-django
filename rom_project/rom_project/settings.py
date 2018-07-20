@@ -140,7 +140,8 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 import dj_database_url
 DATABASES = {}
-DATABASES['default'] =  dj_database_url.config(default='DATABASE_URL')
+DATABASES['default'] =  dj_database_url.config(conn_max_age=600,
+                                               default='postgis://localhost:5432/{}'.format('rom-project'))
 DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
