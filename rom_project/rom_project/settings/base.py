@@ -24,12 +24,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+# DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = [
-    'localhost',
-    'rom-free.herokuapp.com',
-]
+# ALLOWED_HOSTS = [
+#     '127.0.0.1',
+#     'rom-free.herokuapp.com',
+# ]
 
 
 # Application definition
@@ -127,20 +127,18 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-#STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
-import dj_database_url
-DATABASES = {}
-DATABASES['default'] =  dj_database_url.config('DATABASE_URL')
-DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
-
-GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
-GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')
+# import dj_database_url
+# DATABASES = {}
+# DATABASES['default'] =  dj_database_url.config('DATABASE_URL')
+# DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+#
+# GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
+# GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')
